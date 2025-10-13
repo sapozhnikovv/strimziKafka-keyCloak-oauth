@@ -1,12 +1,13 @@
 # Apache Kafka 4.1.0 with Keycloak OAuth2 Authentication
 
-Production-ready Apache Kafka 4.1.0 (KRaft mode) with Keycloak 26.1.1 OAuth2/OIDC authentication using Strimzi OAuth 0.17.0.
+Production-ready Apache Kafka 4.1.0 (KRaft mode) with Keycloak 26.1.1 OAuth2/OIDC authentication using Strimzi Kafka image.
 
 ## Architecture
 
-- **Kafka**: Strimzi 0.48.0 + Apache Kafka 4.1.0 (KRaft combined broker+controller)
+- **Kafka Distribution**: Strimzi Kafka image 0.48.0 (includes Apache Kafka 4.1.0 + Strimzi OAuth 0.17.0 pre-bundled)
+- **Kafka Version**: Apache Kafka 4.1.0 (KRaft combined broker+controller)
+- **OAuth Library**: Strimzi Kafka OAuth 0.17.0 (bundled in image, bypasses CVE-2025-27817 URL allowlist restriction)
 - **OAuth Provider**: Keycloak 26.1.1
-- **OAuth Library**: Strimzi Kafka OAuth 0.17.0 (bypasses CVE-2025-27817 URL allowlist restriction)
 - **Security**: SASL_SSL (OAuth) for external clients, PLAINTEXT for inter-broker, SSL with self-signed CA
 
 ## CVE-2025-27817 Context
@@ -379,12 +380,19 @@ connection.failed.authentication.delay.ms=1000
 
 ## Technical Notes
 
-### Why Strimzi Instead of Apache Kafka Official Image
+### Why Strimzi Kafka Image Instead of Apache Kafka Official Image
 
-1. **OAuth Support**: Strimzi OAuth library included by default
-2. **CVE-2025-27817**: Bypasses URL allowlist restriction
-3. **Production Ready**: Battle-tested in Kubernetes environments
-4. **Configuration**: Proper environment variable handling for KRaft mode
+The Strimzi Kafka image (`quay.io/strimzi/kafka:0.48.0-kafka-4.1.0`) is used instead of the official Apache Kafka image because:
+
+1. **Bundled OAuth Support**: Includes Strimzi OAuth 0.17.0 library pre-installed (classes: `io.strimzi.kafka.oauth.*`)
+2. **CVE-2025-27817 Bypass**: Strimzi OAuth library doesn't implement the URL allowlist restriction that breaks native Kafka OAuth
+3. **Production Ready**: Battle-tested in Kubernetes environments via Strimzi Operator
+4. **Single Image**: No need to manually download and mount OAuth JAR files
+
+**Image breakdown**:
+- Strimzi Kafka **0.48.0** = Docker image version/release
+- Apache Kafka **4.1.0** = Kafka broker version bundled inside
+- Strimzi OAuth **0.17.0** = OAuth library version bundled inside
 
 ### Issuer URL Duality
 
@@ -411,8 +419,8 @@ ACLs reference this principal for authorization.
 | Component | Version | Notes |
 |-----------|---------|-------|
 | Apache Kafka | 4.1.0 | KRaft mode (no ZooKeeper) |
-| Strimzi | 0.48.0 | Latest stable with Kafka 4.1.0 |
-| Strimzi OAuth | 0.17.0 | Included in Strimzi Kafka image |
+| Strimzi Kafka Image | 0.48.0 | Docker image: `quay.io/strimzi/kafka:0.48.0-kafka-4.1.0` |
+| Strimzi OAuth Library | 0.17.0 | Pre-bundled in Strimzi Kafka 0.48.0 image |
 | Keycloak | 26.1.1 | Latest LTS |
 | librdkafka | 2.12.0+ | OIDC OAuth support |
 | confluent-kafka-python | 2.12.0+ | Matches librdkafka version |
