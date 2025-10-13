@@ -1,14 +1,8 @@
 # Environment and secrets
 .env
 *.secret
-*.key
 ca-key
 *_password
-
-# Keystores and truststores
-*.jks
-*.p12
-*.pem
 
 # Python
 __pycache__/
