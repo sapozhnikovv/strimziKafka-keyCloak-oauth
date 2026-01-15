@@ -5,15 +5,21 @@
 для dev стенда скрипт генерации ключей через generate-cert.sh можно пропустить.
 
 для винды надо поставить jq
+
 choco install jq
 
 затем запустить docker compose up -d
 
 затем только лишь keycloak будет жив, запускаем из mingw/git-bash:
+
 $ ./setup-keycloak.sh
+
 затем
+
 $ ./init-kafka.sh
+
 затем
+
 $ ./fix-audience.sh
 
 
@@ -21,10 +27,13 @@ $ ./fix-audience.sh
 
 затем копируем значение KAFKA_BROKER_CLIENT_SECRET в файл kafka-config\kraft-config.properties
 в oauth.client.secret
+
 во всех файлах .properties удаляем лишние символы чтоб остались ключи, как у .env
 
 затем открываем keycloak там в kafka-realm создаём Client с именем ADMIN или использовать kafka-broker 
+
 это будет Audience
+
 у клиента надо чтоб был Authorization ON чтоб работало всё.
 
 
@@ -32,6 +41,7 @@ $ ./fix-audience.sh
 
 # подключение к кафке в kafka-ui
 bootstrap server=kafka-broker
+
 port=19092
 
 
@@ -42,20 +52,35 @@ port=19092
 # Для работы приложений данные такие
 
 KAFKA_BOOTSTRAP_SERVERS=127.0.0.1:9093
+
 KAFKA_USERNAME=
+
 KAFKA_PASSWORD=
+
 KAFKA_SASL_MECHANISM=OAUTHBEARER
+
 KAFKA_SECURITY_PROTOCOL=SASL_SSL
+
 KAFKA_ENABLE_OAUTH=True
+
 KAFKA_OAUTH_PRODUCER_CLIENT_ID=kafka-producer
+
 KAFKA_OAUTH_CONSUMER_CLIENT_ID=kafka-consumer
+
 KAFKA_OAUTH_PRODUCER_SECRET=*значение из .env около докер композ*
+
 KAFKA_OAUTH_CONSUMER_SECRET=*значение из .env около докер композ*
+
 KAFKA_OAUTH_TOKEN_URL=http://localhost:8080
+
 KAFKA_OAUTH_GRANT_TYPE=client_credentials
+
 KAFKA_OAUTH_CERTIFICATE=*путь до папки с композом*\kafka-security\ca\ca-cert.pem
+
 KAFKA_OAUTH_AUDIENCE=ADMIN
+
 KAFKA_OAUTH_REALM=kafka-realm
+
 
 
 # как проверить выдачу токена
