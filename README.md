@@ -93,6 +93,7 @@ curl -kX POST http://localhost:8080/realms/kafka-realm/protocol/openid-connect/t
 
 # бэкап кафки
 Данные кафки хранятся в docker-data/keycloak-data
+
 Если что - всегда можно подменить данные в этой папке, если её заранее забэкапить.
 
 # Оригинальный README
