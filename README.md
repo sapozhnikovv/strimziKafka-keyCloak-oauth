@@ -51,36 +51,18 @@ port=19092
 
 # Для работы приложений данные такие
 
-KAFKA_BOOTSTRAP_SERVERS=127.0.0.1:9093
-
-KAFKA_USERNAME=
-
-KAFKA_PASSWORD=
-
-KAFKA_SASL_MECHANISM=OAUTHBEARER
-
-KAFKA_SECURITY_PROTOCOL=SASL_SSL
-
-KAFKA_ENABLE_OAUTH=True
-
-KAFKA_OAUTH_PRODUCER_CLIENT_ID=kafka-producer
-
-KAFKA_OAUTH_CONSUMER_CLIENT_ID=kafka-consumer
-
-KAFKA_OAUTH_PRODUCER_SECRET=*значение из .env около докер композ*
-
-KAFKA_OAUTH_CONSUMER_SECRET=*значение из .env около докер композ*
-
-KAFKA_OAUTH_TOKEN_URL=http://localhost:8080
-
-KAFKA_OAUTH_GRANT_TYPE=client_credentials
-
-KAFKA_OAUTH_CERTIFICATE=*путь до папки с композом*\kafka-security\ca\ca-cert.pem
-
-KAFKA_OAUTH_AUDIENCE=ADMIN
-
-KAFKA_OAUTH_REALM=kafka-realm
-
+BOOTSTRAP_SERVERS=127.0.0.1:9093
+SASL_MECHANISM=OAUTHBEARER
+SECURITY_PROTOCOL=SASL_SSL
+OAUTH_PRODUCER_CLIENT_ID=kafka-producer
+OAUTH_CONSUMER_CLIENT_ID=kafka-consumer
+OAUTH_PRODUCER_SECRET=*значение из .env около докер композ*
+OAUTH_CONSUMER_SECRET=*значение из .env около докер композ*
+OAUTH_TOKEN_URL=http://localhost:8080
+OAUTH_GRANT_TYPE=client_credentials
+OAUTH_CERTIFICATE=*путь до папки с композом*\kafka-security\ca\ca-cert.pem
+OAUTH_AUDIENCE=ADMIN
+OAUTH_REALM=kafka-realm
 
 
 # как проверить выдачу токена
