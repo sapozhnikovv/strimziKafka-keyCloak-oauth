@@ -1,3 +1,77 @@
+﻿# Рабочая версия Кафки+КК для работы через OAuth
+
+# Как ставить чтобы всё это работало (по шагам)
+
+для dev стенда скрипт генерации ключей через generate-cert.sh можно пропустить.
+
+для винды надо поставить jq
+choco install jq
+
+затем запустить docker compose up -d
+
+затем только лишь keycloak будет жив, запускаем из mingw/git-bash:
+$ ./setup-keycloak.sh
+затем
+$ ./init-kafka.sh
+затем
+$ ./fix-audience.sh
+
+
+открываем .env и во всех переменных где SECRET= убираем лишьнее до ключа который описан ниже, они вида OCaoxP89AEN2RCmKYehMWI1WV8iAzKr3
+
+затем копируем значение KAFKA_BROKER_CLIENT_SECRET в файл kafka-config\kraft-config.properties
+в oauth.client.secret
+во всех файлах .properties удаляем лишние символы чтоб остались ключи, как у .env
+
+затем открываем keycloak там в kafka-realm создаём Client с именем ADMIN или использовать kafka-broker 
+это будет Audience
+у клиента надо чтоб был Authorization ON чтоб работало всё.
+
+
+затем запускаем kafka-broker в докере (без compose)
+
+# подключение к кафке в kafka-ui
+bootstrap server=kafka-broker
+port=19092
+
+
+Для работы консюмеров надо создать топик с 50 партициями, его имя должно быть: __consumer_offsets
+
+
+
+# Для работы приложений данные такие
+
+KAFKA_BOOTSTRAP_SERVERS=127.0.0.1:9093
+KAFKA_USERNAME=
+KAFKA_PASSWORD=
+KAFKA_SASL_MECHANISM=OAUTHBEARER
+KAFKA_SECURITY_PROTOCOL=SASL_SSL
+KAFKA_ENABLE_OAUTH=True
+KAFKA_OAUTH_PRODUCER_CLIENT_ID=kafka-producer
+KAFKA_OAUTH_CONSUMER_CLIENT_ID=kafka-consumer
+KAFKA_OAUTH_PRODUCER_SECRET=*значение из .env около докер композ*
+KAFKA_OAUTH_CONSUMER_SECRET=*значение из .env около докер композ*
+KAFKA_OAUTH_TOKEN_URL=http://localhost:8080
+KAFKA_OAUTH_GRANT_TYPE=client_credentials
+KAFKA_OAUTH_CERTIFICATE=*путь до папки с композом*\kafka-security\ca\ca-cert.pem
+KAFKA_OAUTH_AUDIENCE=ADMIN
+KAFKA_OAUTH_REALM=kafka-realm
+
+
+# как проверить выдачу токена
+curl -X POST http://localhost:8080/realms/kafka-realm/protocol/openid-connect/token  -d 'grant_type=client_credentials'   -d 'client_id=kafka-producer'  -d 'client_secret=*секрет из .env*'
+
+затем токен из ответа передать в 
+curl -kX POST http://localhost:8080/realms/kafka-realm/protocol/openid-connect/token -H "Authorization: Bearer *длинный токен из ответа*" --data "grant_type=urn:ietf:params:oauth:grant-type:uma-ticket" --data "audience=ADMIN"
+
+в ответе должно быть что-то такое {"upgraded":false,"access_token":"*длинный токен*","expires_in":300,"refresh_expires_in":0,"token_type":"Bearer","not-before-policy":0}
+
+# бэкап кафки
+Данные кафки хранятся в docker-data/keycloak-data
+Если что - всегда можно подменить данные в этой папке, если её заранее забэкапить.
+
+# Оригинальный README
+
 # Apache Kafka 4.1.0 with Keycloak OAuth2 Authentication
 
 Production-ready Apache Kafka 4.1.0 (KRaft mode) with Keycloak 26.1.1 OAuth2/OIDC authentication using Strimzi Kafka image.

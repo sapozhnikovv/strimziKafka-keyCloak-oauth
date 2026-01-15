@@ -17,19 +17,11 @@ ADMIN_USER="admin"
 ADMIN_PASS="admin123"
 REALM_NAME="kafka-realm"
 
-echo -e "${YELLOW}Waiting for Keycloak to be ready...${NC}"
-for i in {1..30}; do
-    if curl -sf "${KEYCLOAK_URL}/health/ready" > /dev/null 2>&1; then
-        echo -e "${GREEN}✓ Keycloak is ready${NC}"
-        break
-    fi
-    echo "Waiting... ($i/30)"
-    sleep 2
-done
+
 
 # Get admin access token
 echo -e "${YELLOW}Getting admin access token...${NC}"
-ADMIN_TOKEN=$(curl -s -X POST "${KEYCLOAK_URL}/realms/master/protocol/openid-connect/token" \
+ADMIN_TOKEN=$(curl -s -X POST "http://localhost:8080/realms/master/protocol/openid-connect/token" \
     -H "Content-Type: application/x-www-form-urlencoded" \
     -d "username=${ADMIN_USER}" \
     -d "password=${ADMIN_PASS}" \

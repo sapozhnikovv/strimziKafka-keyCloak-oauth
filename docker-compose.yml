@@ -1,4 +1,4 @@
-version: '3.8'
+﻿version: '3.8'
 
 services:
   keycloak:
@@ -14,6 +14,10 @@ services:
       KC_HOSTNAME_STRICT_HTTPS: "false"
     ports:
       - "8080:8080"
+    volumes:
+      - ./docker-data/keycloak-data:/opt/keycloak/data
+      - ./docker-data/keycloak-import:/opt/keycloak/data/import:ro
+      - ./docker-data/keycloak-logs:/opt/keycloak/log
     networks:
       - kafka-network
     healthcheck:
@@ -63,8 +67,8 @@ services:
       # SSL certificates
       - ./kafka-security/broker/kafka.server.keystore.jks:/etc/kafka/secrets/kafka.server.keystore.jks:ro
       - ./kafka-security/broker/kafka.server.truststore.jks:/etc/kafka/secrets/kafka.server.truststore.jks:ro
-      # Persistent data
-      - kafka-broker-data:/var/lib/kafka/data
+      - ./docker-data/kafka-broker-data:/var/lib/kafka/data
+      - ./docker-data/kafka-logs:/tmp/kafka-logs
     networks:
       - kafka-network
     healthcheck:
@@ -74,9 +78,17 @@ services:
       retries: 5
       start_period: 60s
 
-volumes:
-  kafka-broker-data:
-    driver: local
+     
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8084:8080
+    environment:
+      - DYNAMIC_CONFIG_ENABLED=true
+    networks:
+      - kafka-network
+
 
 networks:
   kafka-network:
