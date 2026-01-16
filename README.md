@@ -14,6 +14,14 @@ choco install jq
 
 $ ./setup-keycloak.sh
 
+открываем .env и во всех переменных где SECRET= убираем лишьнее до ключа который описан ниже, они вида OCaoxP89AEN2RCmKYehMWI1WV8iAzKr3
+
+затем копируем значение KAFKA_BROKER_CLIENT_SECRET в файл kafka-config\kraft-config.properties
+в oauth.client.secret
+
+во всех файлах .properties удаляем лишние символы чтоб остались ключи, как у .env
+
+
 затем
 
 $ ./init-kafka.sh
@@ -21,14 +29,6 @@ $ ./init-kafka.sh
 затем
 
 $ ./fix-audience.sh
-
-
-открываем .env и во всех переменных где SECRET= убираем лишьнее до ключа который описан ниже, они вида OCaoxP89AEN2RCmKYehMWI1WV8iAzKr3
-
-затем копируем значение KAFKA_BROKER_CLIENT_SECRET в файл kafka-config\kraft-config.properties
-в oauth.client.secret
-
-во всех файлах .properties удаляем лишние символы чтоб остались ключи, как у .env
 
 затем открываем keycloak там в kafka-realm создаём Client с именем ADMIN или использовать kafka-broker 
 
@@ -51,18 +51,18 @@ port=19092
 
 # Для работы приложений данные такие
 
-BOOTSTRAP_SERVERS=127.0.0.1:9093
-SASL_MECHANISM=OAUTHBEARER
-SECURITY_PROTOCOL=SASL_SSL
-OAUTH_PRODUCER_CLIENT_ID=kafka-producer
-OAUTH_CONSUMER_CLIENT_ID=kafka-consumer
-OAUTH_PRODUCER_SECRET=*значение из .env около докер композ*
-OAUTH_CONSUMER_SECRET=*значение из .env около докер композ*
-OAUTH_TOKEN_URL=http://localhost:8080
-OAUTH_GRANT_TYPE=client_credentials
-OAUTH_CERTIFICATE=*путь до папки с композом*\kafka-security\ca\ca-cert.pem
-OAUTH_AUDIENCE=ADMIN
-OAUTH_REALM=kafka-realm
+. BOOTSTRAP_SERVERS=127.0.0.1:9093     
+. SASL_MECHANISM=OAUTHBEARER     
+. SECURITY_PROTOCOL=SASL_SSL     
+. OAUTH_PRODUCER_CLIENT_ID=kafka-producer      
+. OAUTH_CONSUMER_CLIENT_ID=kafka-consumer     
+. OAUTH_PRODUCER_SECRET=*значение из .env около докер композ*   
+. OAUTH_CONSUMER_SECRET=*значение из .env около докер композ*    
+. OAUTH_TOKEN_URL=http://localhost:8080    
+. OAUTH_GRANT_TYPE=client_credentials   
+. OAUTH_CERTIFICATE=*путь до папки с композом*\kafka-security\ca\ca-cert.pem   
+. OAUTH_AUDIENCE=ADMIN   
+. OAUTH_REALM=kafka-realm   
 
 
 # как проверить выдачу токена
